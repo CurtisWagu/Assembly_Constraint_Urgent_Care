@@ -73,11 +73,11 @@ Namespace Assembly_Constraint_Urgent_Care
 
             Try
                 AddToUserInterface()
-                Globals._inventorApplication.StatusBarText = "Assembly Constraint Urgent Care loaded."
+                Globals._inventorApplication.StatusBarText = "Urgent Care loaded."
             Catch ex As System.Exception
                 System.Diagnostics.Debug.WriteLine("*******  Error adding user interface: " & ex.Message)
-                System.Windows.Forms.MessageBox.Show("Assembly Constraint Urgent Care could not add its button:" & vbCrLf & vbCrLf & ex.Message,
-                                                     "Assembly Constraint Urgent Care")
+                System.Windows.Forms.MessageBox.Show("Urgent Care could not add its button:" & vbCrLf & vbCrLf & ex.Message,
+                                                     "Urgent Care")
             End Try
 
         End Sub

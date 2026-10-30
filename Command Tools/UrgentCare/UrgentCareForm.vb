@@ -2,13 +2,13 @@ Imports System.Windows.Forms
 Imports Inventor
 
 ''' <summary>
-''' Non-modal window listing every unhealthy assembly constraint.
+''' Non-modal window listing every unhealthy assembly constraint and assembly joint.
 '''   - Click an item      : (if "Refresh on select" is on) updates the assembly,
-'''                          rebuilds the list, then selects that constraint.
-'''   - Edit               : launches Inventor's Edit Constraint command.
+'''                          rebuilds the list, then selects that constraint or joint.
+'''   - Edit               : launches Inventor's Edit Constraint or Edit Joint command.
 '''   - Refresh            : one update + re-scan.
 '''   - Finish / close (X) : turns Defer Update OFF and runs one update.
-''' Defer Update is turned on automatically only when more than one constraint
+''' Defer Update is turned on automatically only when more than one constraint or joint
 ''' is broken (re-evaluated on every refresh).
 ''' </summary>
 Public Class UrgentCareForm
@@ -20,7 +20,7 @@ Public Class UrgentCareForm
     Private docName As String = ""
     Private windowIcon As System.Drawing.Icon
     Private restored As Boolean = False
-    Private sick As New List(Of AssemblyConstraint)
+    Private sick As New List(Of SickItem)
     Private lst As New ListBox()
     Private status As New Label()
     Private chkDefer As New CheckBox()
@@ -29,6 +29,13 @@ Public Class UrgentCareForm
     Private lastRows As Integer = 0
     Private Const STATUS_H As Integer = 48
     Private Const BAR_H As Integer = 40
+
+    ''' <summary>One broken constraint or joint in the list.</summary>
+    Private Class SickItem
+        Public Obj As Object
+        Public IsJoint As Boolean
+        Public Name As String
+    End Class
 
     Private Declare Auto Function SetForegroundWindow Lib "user32.dll" (ByVal hWnd As IntPtr) As Boolean
 
@@ -50,7 +57,7 @@ Public Class UrgentCareForm
         End Try
         ' Defer Update is decided after the first scan (see Reload)
 
-        Me.Text = "Assembly Constraint Urgent Care"
+        Me.Text = "Urgent Care"
         Try
             windowIcon = LoadIcon("ConstraintUrgentCare.ico", 32)
             Me.Icon = windowIcon
@@ -89,7 +96,7 @@ Public Class UrgentCareForm
         chkDefer.ForeColor = System.Drawing.Color.Gray
         Dim tip As New ToolTip()
         tip.AutoPopDelay = 10000
-        tip.SetToolTip(chkDefer, "Defer Update is normally OFF in Inventor. It is turned ON here automatically only when more than one constraint is broken, so the solver doesn't prompt after every edit. Finish turns it back OFF.")
+        tip.SetToolTip(chkDefer, "Defer Update is normally OFF in Inventor. It is turned ON here automatically only when more than one constraint or joint is broken, so the solver doesn't prompt after every edit. Finish turns it back OFF.")
         bar.Controls.Add(chkDefer)
         AddHandler chkDefer.CheckedChanged, AddressOf OnDeferToggled
 
@@ -97,7 +104,7 @@ Public Class UrgentCareForm
         chkAuto.AutoSize = True
         chkAuto.Checked = True
         chkAuto.Margin = New System.Windows.Forms.Padding(16, 6, 0, 0)
-        tip.SetToolTip(chkAuto, "When on, clicking a constraint in the list runs an update and rebuilds the list first. Turn off if the update triggers the constraint warning popup.")
+        tip.SetToolTip(chkAuto, "When on, clicking an item in the list runs an update and rebuilds the list first. Turn off if the update triggers the constraint warning popup.")
         bar.Controls.Add(chkAuto)
 
         Me.Controls.Add(lst)
@@ -117,22 +124,55 @@ Public Class UrgentCareForm
     Private Sub Reload()
         sick.Clear()
         lst.Items.Clear()
+        Dim constraintCount As Integer = 0
+        Dim jointCount As Integer = 0
+
         For Each c As AssemblyConstraint In asm.ComponentDefinition.Constraints
             Dim h As String = c.HealthStatus.ToString()
             If h <> "kUpToDateHealth" AndAlso h <> "kSuppressedHealth" Then
-                sick.Add(c)
+                Dim item As New SickItem()
+                item.Obj = c
+                item.IsJoint = False
+                item.Name = c.Name
+                sick.Add(item)
+                constraintCount += 1
                 lst.Items.Add(Describe(c, h))
             End If
         Next
+
+        Try
+            For Each j As AssemblyJoint In asm.ComponentDefinition.Joints
+                Dim h As String = j.HealthStatus.ToString()
+                If h <> "kUpToDateHealth" AndAlso h <> "kSuppressedHealth" Then
+                    Dim item As New SickItem()
+                    item.Obj = j
+                    item.IsJoint = True
+                    item.Name = j.Name
+                    sick.Add(item)
+                    jointCount += 1
+                    lst.Items.Add(Describe(j, h))
+                End If
+            Next
+        Catch
+            ' If joints cannot be read, the constraints are still listed.
+        End Try
         ' Defer Update only matters when there is more than one problem
         ApplyDefer(sick.Count > 1)
-        ' The checkbox can only be used when there is more than one broken constraint
+        ' The checkbox can only be used when there is more than one broken constraint or joint
         chkDefer.Enabled = (sick.Count > 1)
 
         If sick.Count = 0 Then
-            status.Text = "No broken constraints. Click Finish."
+            status.Text = "No broken constraints or joints. Click Finish."
         Else
-            status.Text = sick.Count & " broken constraint(s)." & vbCrLf &
+            Dim summary As String
+            If jointCount = 0 Then
+                summary = constraintCount & " broken constraint(s)."
+            ElseIf constraintCount = 0 Then
+                summary = jointCount & " broken joint(s)."
+            Else
+                summary = constraintCount & " broken constraint(s) and " & jointCount & " broken joint(s)."
+            End If
+            status.Text = summary & vbCrLf &
                           "Click one to select it, then click the Edit button (or right-click it in the browser > Edit)."
         End If
 
@@ -175,12 +215,21 @@ Public Class UrgentCareForm
         Return s & "   (" & h.Substring(1).Replace("Health", "") & ")"
     End Function
 
+    Private Function Describe(j As AssemblyJoint, h As String) As String
+        Dim s As String = "Joint:  " & j.Name
+        Try
+            s &= "   [" & j.OccurrenceOne.Name & "  <->  " & j.OccurrenceTwo.Name & "]"
+        Catch
+        End Try
+        Return s & "   (" & h.Substring(1).Replace("Health", "") & ")"
+    End Function
+
     Private Sub SelectCurrent()
         Dim i As Integer = lst.SelectedIndex
         If i < 0 OrElse i >= sick.Count Then Return
         Try
             asm.SelectSet.Clear()
-            asm.SelectSet.Select(sick(i))
+            asm.SelectSet.Select(sick(i).Obj)
         Catch
         End Try
     End Sub
@@ -198,6 +247,7 @@ Public Class UrgentCareForm
         busy = True
         Try
             Dim targetName As String = sick(i).Name
+            Dim targetIsJoint As Boolean = sick(i).IsJoint
             Try
                 asm.Update()
             Catch
@@ -206,7 +256,7 @@ Public Class UrgentCareForm
 
             Dim newIdx As Integer = -1
             For j As Integer = 0 To sick.Count - 1
-                If sick(j).Name = targetName Then
+                If sick(j).Name = targetName AndAlso sick(j).IsJoint = targetIsJoint Then
                     newIdx = j
                     Exit For
                 End If
@@ -226,10 +276,18 @@ Public Class UrgentCareForm
     Private Sub OnEdit(sender As Object, e As EventArgs)
         SelectCurrent()
         Dim tried As New List(Of String)
-        ' Confirmed present in Inventor 2025.4
+        Dim isJoint As Boolean = False
+        If lst.SelectedIndex >= 0 AndAlso lst.SelectedIndex < sick.Count Then isJoint = sick(lst.SelectedIndex).IsJoint
+
         Dim names As New List(Of String)
-        names.Add("AssemblyEditConstraintCtxCmd")
-        names.Add("AssemblyEditConstraintCmd")
+        If isJoint Then
+            ' The command behind Edit on a joint (confirmed present in Inventor 2025.4)
+            names.Add("AssemblyJointEditComponentCmd")
+        Else
+            ' Confirmed present in Inventor 2025.4
+            names.Add("AssemblyEditConstraintCtxCmd")
+            names.Add("AssemblyEditConstraintCmd")
+        End If
         ' Context-menu commands need Inventor to be the active window
         Try
             SetForegroundWindow(New IntPtr(app.MainFrameHWND))
@@ -241,7 +299,7 @@ Public Class UrgentCareForm
                 If cd.Enabled Then
                     status.Text = "Running " & n & "..."
                     cd.Execute2(True)
-                    status.Text = "Edit finished. Click Refresh to re-check the list."
+                    status.Text = "Ran " & n & ". Click Refresh to re-check the list."
                     Return
                 Else
                     tried.Add(n & " (disabled)")
@@ -251,7 +309,7 @@ Public Class UrgentCareForm
             End Try
         Next
         status.Text = "No usable edit command (" & String.Join(", ", tried.ToArray()) &
-                      "). Right-click the selected constraint in the browser > Edit."
+                      "). Right-click the selected item in the browser > Edit."
     End Sub
 
     Private Sub OnDeferToggled(sender As Object, e As EventArgs)

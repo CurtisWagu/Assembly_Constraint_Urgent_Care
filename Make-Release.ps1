@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Builds a Release version of Assembly Constraint Urgent Care and packages the add-in bundle as a zip
+  Builds a Release version of Urgent Care and packages the add-in bundle as a zip
   that can be attached to a GitHub release.
 
 .DESCRIPTION

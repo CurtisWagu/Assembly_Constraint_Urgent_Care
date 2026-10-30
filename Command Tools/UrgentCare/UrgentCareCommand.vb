@@ -1,12 +1,12 @@
 Imports Inventor
 
 ''' <summary>
-''' The Assembly Constraint Urgent Care ribbon button: creates the button definition,
+''' The Urgent Care ribbon button: creates the button definition,
 ''' puts it on a panel, and opens the window when it is clicked.
 ''' </summary>
 Module UrgentCareCommand
 
-    Private Const Title As String = "Assembly Constraint Urgent Care"
+    Private Const Title As String = "Urgent Care"
     Private Const IconFileName As String = "ConstraintUrgentCare.ico"
 
     ' Keep the icons alive for the life of the add-in (the picture objects borrow their handles).
@@ -32,14 +32,15 @@ Module UrgentCareCommand
         End Try
 
         ' This is the text the user sees on the button.
-        Dim buttonLabel As String = "Constraint" & vbLf & "Urgent Care"
+        Dim buttonLabel As String = "Urgent" & vbLf & "Care"
 
         ' Text that displays when the user hovers over the button.
-        Dim toolTipSimple As String = "Lists the broken constraints in the assembly so you can fix them one by one"
+        Dim toolTipSimple As String = "Lists the broken constraints and joints in the assembly so you can fix them one by one"
         Dim toolTipExpanded As String =
-            ChrW(&H2022) & " Shows every broken (sick) constraint in one window." & vbLf &
+            ChrW(&H2022) & " Shows every broken (sick) constraint and joint in one window." & vbLf &
             ChrW(&H2022) & " Click one to select it, then Edit it." & vbLf &
-            ChrW(&H2022) & " Defer Update is turned on for you when more than one constraint is broken."
+            ChrW(&H2022) & " Works with both assembly constraints and joints." & vbLf &
+            ChrW(&H2022) & " Defer Update is turned on for you when more than one constraint or joint is broken."
 
         Dim internalName As String = "Assembly_Constraint_Urgent_Care_" & Globals._addInClientId & "_Button_InternalName"
         Dim controlDefs As Inventor.ControlDefinitions = Globals._inventorApplication.CommandManager.ControlDefinitions

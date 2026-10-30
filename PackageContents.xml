@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ApplicationPackage SchemaVersion="1.0" Version="1.0" ProductCode="{365B2F23-E672-443B-96AC-252279713C68}" Name="Assembly_Constraint_Urgent_Care" Description="Assembly Constraint Urgent Care" Author="Topper Floats">
+<ApplicationPackage SchemaVersion="1.0" Version="2.0" ProductCode="{365B2F23-E672-443B-96AC-252279713C68}" Name="Assembly_Constraint_Urgent_Care" Description="Urgent Care" Author="Topper Floats">
   <CompanyDetails Name="Topper Floats" />
   <Components>
     <!-- For Inventor Engine, "Platform" attribute must be "Inventor" -->
@@ -9,7 +9,7 @@
     <ComponentEntry
 			LoadOnAutoCADStartup="False"
 			LoadOnCommandInvocation="False"
-			AppDescription="Assembly Constraint Urgent Care"
+			AppDescription="Urgent Care"
 			ModuleName="./Contents/Autodesk.Assembly_Constraint_Urgent_Care.Inventor.addin"
 			AppName="Assembly_Constraint_Urgent_Care"/>
   </Components>
