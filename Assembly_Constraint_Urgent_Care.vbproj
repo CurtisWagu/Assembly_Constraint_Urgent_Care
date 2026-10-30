@@ -22,8 +22,8 @@
     <Company>Topper Floats</Company>
     <Product>$(MSBuildProjectName)</Product>
     <Copyright>Copyright © 2026</Copyright>
-    <Version>2.0.0</Version>
-    <FileVersion>2.0.0</FileVersion>
+    <Version>2.1.0</Version>
+    <FileVersion>2.1.0</FileVersion>
 
     <!-- SDK-Style Project Properties -->
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
