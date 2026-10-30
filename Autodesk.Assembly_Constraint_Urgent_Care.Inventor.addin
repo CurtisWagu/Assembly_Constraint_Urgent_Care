@@ -1,0 +1,14 @@
+<Addin Type="Standard">
+    <!--Inventor 2025 (version 29) and newer-->
+    <ClassId>{365B2F23-E672-443B-96AC-252279713C68}</ClassId>
+    <ClientId>{365B2F23-E672-443B-96AC-252279713C68}</ClientId>
+    <DisplayName>Assembly Constraint Urgent Care</DisplayName>
+    <Description>Lists broken assembly constraints in one window and helps you fix them.</Description>
+    <Assembly>Assembly_Constraint_Urgent_Care.dll</Assembly>
+    <LoadOnStartUp>1</LoadOnStartUp>
+    <UserUnloadable>1</UserUnloadable>
+    <Hidden>0</Hidden>
+    <SupportedSoftwareVersionGreaterThan>28..</SupportedSoftwareVersionGreaterThan>
+    <DataVersion>1</DataVersion>
+    <UserInterfaceVersion>1</UserInterfaceVersion>
+</Addin>

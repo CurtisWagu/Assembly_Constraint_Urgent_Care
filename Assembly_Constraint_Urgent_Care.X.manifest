@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+
+    <assemblyIdentity name="Assembly_Constraint_Urgent_Care" version="1.0.0.0"></assemblyIdentity>
+
+    <clrClass clsid="{365B2F23-E672-443B-96AC-252279713C68}" progid="Assembly_Constraint_Urgent_Care.StandardAddInServer" threadingModel="Both" name="Assembly_Constraint_Urgent_Care.Assembly_Constraint_Urgent_Care.StandardAddInServer" runtimeVersion=""></clrClass>
+
+    <file name="Assembly_Constraint_Urgent_Care.dll" hashalg="SHA1"></file>
+
+</assembly>
