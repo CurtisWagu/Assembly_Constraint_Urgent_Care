@@ -109,12 +109,11 @@ Broken assembly constraints (Mate, Flush, Angle, Insert and so on) and broken as
 
 | Control | What it does |
 |---|---|
-| **The list** | One line per broken constraint or joint: name, the two parts it joins, and its status. The window grows to show 5 to 10 lines, then scrolls. |
+| **The list** | One line per broken constraint or joint: name, the two parts it joins, and its status. Clicking an item first updates the assembly and rebuilds the list, so it is always current, then selects that item. The window grows to show 5 to 10 lines, then scrolls. |
 | **Edit** | Selects the item and runs Inventor's **Edit Constraint** or **Edit Joint** command. If that command is not available in your version, select the item in the list, then right-click it in the Inventor browser and choose **Edit**. |
 | **Refresh** | Updates the assembly and rebuilds the list. Constraints and joints you have fixed drop off it. |
 | **Finish** | Turns Defer Update **off**, updates the assembly once, and closes the window. Closing the window with the X does the same. |
 | **Defer updates** | Shows whether Defer Update is on (black) or off (gray). It is switched on for you when more than one constraint or joint is broken, and you can tick or untick it yourself. Hover over it for a short explanation. |
-| **Refresh on select** | When ticked, clicking a different item first updates the assembly and rebuilds the list. Untick it if that update brings back Inventor's constraint warning. |
 
 Tips:
 
@@ -143,7 +142,7 @@ To switch it off without deleting it, use **Tools > Add-Ins > Add-In Manager** i
 
 **The Edit button does nothing.** The window says what it tried. Select the item in the list, then right-click it in the Inventor browser and choose **Edit**. For joints the add-in runs the command `AssemblyJointEditComponentCmd`, which was confirmed on Inventor 2025.4 only. If Autodesk renames it in another version, use the right-click route.
 
-**Inventor's constraint warning still appears.** Untick **Refresh on select** and use the **Refresh** button when you want to update the list. The add-in cannot always stop Inventor from showing the warning.
+**Inventor's constraint warning still appears.** Clicking an item updates the assembly, and Inventor can show its own warning when that happens. The add-in cannot always stop it.
 
 **The list is empty but a constraint looks wrong.** Click **Refresh**. The list shows constraints that Inventor reports as broken or out of date, so a constraint that is only unwanted will not appear.
 

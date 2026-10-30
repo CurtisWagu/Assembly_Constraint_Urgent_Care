@@ -3,7 +3,7 @@ Imports Inventor
 
 ''' <summary>
 ''' Non-modal window listing every unhealthy assembly constraint and assembly joint.
-'''   - Click an item      : (if "Refresh on select" is on) updates the assembly,
+'''   - Click an item      : updates the assembly,
 '''                          rebuilds the list, then selects that constraint or joint.
 '''   - Edit               : launches Inventor's Edit Constraint or Edit Joint command.
 '''   - Refresh            : one update + re-scan.
@@ -24,7 +24,6 @@ Public Class UrgentCareForm
     Private lst As New ListBox()
     Private status As New Label()
     Private chkDefer As New CheckBox()
-    Private chkAuto As New CheckBox()
     Private busy As Boolean = False
     Private lastRows As Integer = 0
     Private Const STATUS_H As Integer = 48
@@ -100,12 +99,6 @@ Public Class UrgentCareForm
         bar.Controls.Add(chkDefer)
         AddHandler chkDefer.CheckedChanged, AddressOf OnDeferToggled
 
-        chkAuto.Text = "Refresh on select"
-        chkAuto.AutoSize = True
-        chkAuto.Checked = True
-        chkAuto.Margin = New System.Windows.Forms.Padding(16, 6, 0, 0)
-        tip.SetToolTip(chkAuto, "When on, clicking an item in the list runs an update and rebuilds the list first. Turn off if the update triggers the constraint warning popup.")
-        bar.Controls.Add(chkAuto)
 
         Me.Controls.Add(lst)
         Me.Controls.Add(status)
@@ -238,11 +231,6 @@ Public Class UrgentCareForm
         If busy Then Return
         Dim i As Integer = lst.SelectedIndex
         If i < 0 OrElse i >= sick.Count Then Return
-
-        If Not chkAuto.Checked Then
-            SelectCurrent()
-            Return
-        End If
 
         busy = True
         Try
