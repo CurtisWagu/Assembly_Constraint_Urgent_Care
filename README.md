@@ -8,8 +8,6 @@ A small add-in for Autodesk Inventor that lists the broken ("sick") constraints 
 
 **Download and source code:** <https://github.com/CurtisWagu/Assembly_Constraint_Urgent_Care>
 
-![The Assembly Constraint Urgent Care window](docs/images/urgent-care-window.png)
-
 > **Provided as is. Not supported.** See [Disclaimer](#disclaimer).
 
 ## Contents
@@ -146,6 +144,7 @@ To switch it off without deleting it, use **Tools > Add-Ins > Add-In Manager** i
 **Two copies of the add-in.** If you also built from source, the build installs to the same plug-in folder. Keep only one copy of the bundle.
 
 ## Build and modify the source code
+![The Assembly Constraint Urgent Care window](docs/images/urgent-care-window.png)
 
 This section is for people who want to change the add-in for their own use.
 
